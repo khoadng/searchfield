@@ -707,10 +707,15 @@ class _SearchFieldState<T> extends State<SearchField<T>> {
       suggestionStream.sink.add(widget.suggestions);
       filteredResult.clear();
       filteredResult.addAll(widget.suggestions);
-      // if a item was already selected
+      // If an item was already selected, update highlightIndex based on the old selection.
       if (highlightIndex >= 0) {
-        highlightIndex = widget.suggestions.indexWhere(
-            (element) => element == oldWidget.suggestions[highlightIndex - 1]);
+        if (highlightIndex > 0) {
+          final previousSuggestion = oldWidget.suggestions[highlightIndex - 1];
+          final newIndex = widget.suggestions.indexWhere((element) => element == previousSuggestion);
+          // If not found, fallback to 0 (or -1 if you prefer to clear the selection)
+          highlightIndex = newIndex >= 0 ? newIndex : 0;
+        }
+        // if highlightIndex is 0, keep it as 0
       }
     }
     if (oldWidget.scrollbarDecoration != widget.scrollbarDecoration) {
